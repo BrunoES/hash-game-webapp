@@ -15,15 +15,30 @@ export const changeScoreBoard = (descricao) => {
 };
 
 export const changeCurrentSquare = (squareNumber) => {
-    console.log("Aletando SQUARE: ");
+    console.log(`/matchs/${`80cb9e92-e1ba-4c9d-89e8-a1c6f2f037e1`}/square_${squareNumber}`);
+    console.log("aff SQUARE: ");
     console.log(squareNumber);
-    
+
+    /*
     return dispatch => {
         dispatch({
             type: CHANGE_SQUARE_NUMBER,
             payload: squareNumber
         });
     }
+    */
+
+    return dispatch => {
+        firebase.database().ref(`/matchs/${`80cb9e92-e1ba-4c9d-89e8-a1c6f2f037e1`}/square_${squareNumber}`)
+            .push('X')
+            .then(() => dispatch({
+                type: CHANGE_SQUARE_NUMBER,
+                payload: squareNumber
+            }))
+            .catch((erro) => dispatch({
+                type: CHANGE_SQUARE_NUMBER,
+                payload: ''
+        }))};
 
     /*return dispatch => {
         
