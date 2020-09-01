@@ -2,7 +2,8 @@ import {
     REQUEST_NEW_MATCH,
     MATCH_START,
     CHANGE_SCOREBOARD,
-    CHANGE_SQUARE_NUMBER
+    CHANGE_SQUARE_NUMBER,
+    CHANGE_ALL_SQUARES
 
 } from '../actions/types';
 
@@ -12,10 +13,14 @@ const INITIAL_STATE = {
         playerScore: 0,
         opponentScore: 0
     },
-    squaresStatus: ['', '', '', '', '', '', '', '', ''],
+    squaresStatus: [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     currentSquare: 0,
-    marked: 'X'
+    markedSimbol: 'X'
 }
+
+let tmpSquaresStatus = INITIAL_STATE.squaresStatus;
+let currentSquare = 0;
+let squaresStatusVet = [];
 
 const matchReducer = (state = INITIAL_STATE, action) => {
     switch (action.type) {
@@ -27,7 +32,33 @@ const matchReducer = (state = INITIAL_STATE, action) => {
         case CHANGE_SCOREBOARD:
             return { ...state, score: action.payload };
         case CHANGE_SQUARE_NUMBER:
-            return { ...state, currentSquare: action.payload };
+            tmpSquaresStatus = state.squaresStatus;
+            currentSquare = action.payload;
+            tmpSquaresStatus[currentSquare] = 'X';
+/*
+            console.log("OPAAAAAAAAAAAAAA");        
+            console.log(currentSquare);
+            console.log(tmpSquaresStatus);
+            console.log(state.squaresStatus);
+            console.log("OPAAAAAAAAAAAAAA");
+*/
+            return { ...state, currentSquare: action.payload, squaresStatus: tmpSquaresStatus};
+        case CHANGE_ALL_SQUARES:
+            console.log('-APL--------------------------');
+            console.log(action.payload);
+            /*if (action.payload != null) {
+                squaresStatusVet = action.payload;    
+            } else {
+                squaresStatusVet = INITIAL_STATE.squaresStatu;
+            }
+            
+            squaresStatusVet = action.payload;
+            squaresStatusVet.forEach(
+                (x) => {
+                    return (x != null ? x : '');
+                }
+            );*/
+            return { ...state, squaresStatus: action.payload};
 
         default:
             return state;

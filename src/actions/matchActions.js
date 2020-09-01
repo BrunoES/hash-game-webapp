@@ -4,9 +4,38 @@ import {
     REQUEST_NEW_MATCH,
     MATCH_START,
     CHANGE_SCOREBOARD,
-    CHANGE_SQUARE_NUMBER
+    CHANGE_SQUARE_NUMBER,
+    CHANGE_ALL_SQUARES
 
 } from '../actions/types';
+
+const match_id = '80cb9e92-e1ba-4c9d-89e8-a1c6f2f037e1';
+const square_id = '2';
+
+export const initMatch = (squareNumber) => {
+   const url = `/matchs/${match_id}/`;
+
+   var squares = {
+       1: ' ',
+       2: ' ',
+       3: ' ',
+       4: ' ',
+       5: ' ',
+       6: ' ',
+       7: ' ',
+       8: ' '
+   }
+
+   firebase.database().ref(url)
+   .set(squares);
+
+    return dispatch => {
+        dispatch({
+            type: CHANGE_ALL_SQUARES,
+            payload: squares
+        })
+    }
+};
 
 export const changeScoreBoard = (descricao) => {
     return dispatch => {
@@ -15,116 +44,32 @@ export const changeScoreBoard = (descricao) => {
 };
 
 export const changeCurrentSquare = (squareNumber) => {
-    console.log(`/matchs/${`80cb9e92-e1ba-4c9d-89e8-a1c6f2f037e1`}/square_${squareNumber}`);
-    console.log("aff SQUARE: ");
-    console.log(squareNumber);
+    
+   const url = `/matchs/${match_id}/${squareNumber}`;
 
-    /*
+   console.log('URL');
+   console.log(url);
+   console.log('URL');
+
+   firebase.database().ref(url)
+   .set('X');
+    
     return dispatch => {
         dispatch({
             type: CHANGE_SQUARE_NUMBER,
             payload: squareNumber
-        });
-    }
-    */
-
-    return dispatch => {
-        firebase.database().ref(`/matchs/${`80cb9e92-e1ba-4c9d-89e8-a1c6f2f037e1`}/square_${squareNumber}`)
-            .push('X')
-            .then(() => dispatch({
-                type: CHANGE_SQUARE_NUMBER,
-                payload: squareNumber
-            }))
-            .catch((erro) => dispatch({
-                type: CHANGE_SQUARE_NUMBER,
-                payload: ''
-        }))};
-
-    /*return dispatch => {
-        
-        firebase.collection("Teste").where("id_user", "==", "Teste").get().then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                console.log(`${doc}`);
-            });
-        });
-        
-        dispatch({ type: CHANGE_SQUARES, payload: categoriaId });
-    }*/
-};
-
-export const matchStart = (itemId) => {
-    return dispatch => {
-        dispatch({ type: MATCH_START, payload: itemId });
+        })
     }
 };
 
-export const createNewMatch = () => {
-    return dispatch => {
-        dispatch({ type: REQUEST_NEW_MATCH, payload: '' });
-    }
+export const listenerCurrentSquaresStatus = () => {
+    
+    //const url = ;
+
+   return dispatch => {
+        firebase.database().ref(`/matchs/${match_id}/`)
+        .on("value", snapshot => {
+            dispatch({ type: CHANGE_ALL_SQUARES, payload: snapshot.val() });
+        }
+    )};
 };
-
-/*
-export const adicionarPrato = (novoPrato, localId, categoriaId, tipoItem) => {
-    return dispatch => {
-        firebase.database().ref(`/${tipoItem}/${localId}/${categoriaId}/`)
-            .push(novoPrato)
-            .then(() => dispatch({
-                type: 'ADICIONA_ITEM',
-                payload: novoPrato
-            }))
-            .catch((erro) => dispatch({
-                type: 'ADICIONA_ITEM',
-                payload: ''
-            }))
-    };
-}
-
-export const modificarItem = (item, tipoitem, localId, categoriaId, itemId) => {
-    return dispatch => {
-        firebase.database().ref(`/${tipoitem}/${localId}/${categoriaId}/${itemId}`)
-            .update(item)
-            .then(() => dispatch({
-                type: 'SUCESSO_MODIFICA_ITEM',
-                payload: item
-            }))
-            .catch((error) => dispatch({
-                type: 'ERRO_MODIFICA_ITEM',
-                payload: error.message
-            }))
-    };
-}
-
-export const deletarItem = (tipoItem, localId, categoriaId, itemId) => {
-    return dispatch => {
-        firebase.database().ref(`/${tipoItem}/${localId}/${categoriaId}`).child(itemId).remove().
-            then(function() {
-                dispatch({ type: 'SUCESSO_DELETAR_ITEM', payload: { } });
-            })
-            .catch(function(error) {
-                dispatch({ type: 'ERRO_DELETAR_ITEM', payload: error.message });
-            });
-    };
-};
-
-export const buscarItens = (localId, categoriaId, tipoItem, queryText) => {
-    return dispatch => {
-        firebase.database().ref(`/${tipoItem}/${localId}/${categoriaId}/`).orderByChild('desc').startAt(queryText).endAt(queryText + "\uf8ff")
-            .on("value", snapshot => {
-                dispatch({ type: 'LISTA_ITENS', payload: snapshot.val() });
-            });
-    }
-};
-
-export const limparPrato = () => {
-    return dispatch => {
-        dispatch({ type: 'teste', payload: { } });
-    }
-}
-
-export const remove = (todo) => {
-    return dispatch => {
-        dispatch({ type: 'teste', payload: { } });
-    }
-};
-*/

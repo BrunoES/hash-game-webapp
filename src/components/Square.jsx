@@ -1,16 +1,20 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { changeCurrentSquare } from '../actions/matchActions';
+import { initMatch, changeCurrentSquare, listenerCurrentSquaresStatus } from '../actions/matchActions';
 
 class Square extends React.Component {
 
+    componentWillMount() {
+        this.props.initMatch();
+    }
+
+    componentDidMount() {
+        this.props.listenerCurrentSquaresStatus();
+    }
+
     _changeCurrentSquare(squareNumber) {
-        console.log(this);
-        console.log(this.props);
-        console.log(this.props.marked);
-        console.log(this.props.currentSquare);
-        this.props.changeCurrentSquare({squareNumber});
+        this.props.changeCurrentSquare(squareNumber);
     }
 
     render() {
@@ -18,26 +22,20 @@ class Square extends React.Component {
             <button className="square"
                 onClick={() => this._changeCurrentSquare(this.props.value)}
             >
-                {this.props.marked}
+                {this.props.marked[this.props.value]}
             </button>
         );
     }
 }
 
 const mapStateToProps = (state) => {
-    const marked = state.match.marked;
-
-    console.log('-------');
-    console.log(marked);
-    console.log(state);
-    console.log('-------');
 
     return {
-        marked: state.match.marked,
+        marked: state.match.squaresStatus,
         currentSquare: state.match.currentSquare
     }
 }
 
-const mapDispatchToProps = dispatch => bindActionCreators({ changeCurrentSquare }, dispatch)
+const mapDispatchToProps = dispatch => bindActionCreators({ initMatch, changeCurrentSquare, listenerCurrentSquaresStatus }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(Square);
