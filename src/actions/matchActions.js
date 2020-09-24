@@ -9,33 +9,45 @@ import {
 
 } from '../actions/types';
 
-const match_id = '80cb9e92-e1ba-4c9d-89e8-a1c6f2f037e1';
-const square_id = '2';
+export const initMatch = (match_id, player_1_id, player_2_id) => {
+    let newMatch_id = '';
 
-export const initMatch = (squareNumber) => {
-   const url = `/matchs/${match_id}/`;
 
-   var squares = {
-       1: ' ',
-       2: ' ',
-       3: ' ',
-       4: ' ',
-       5: ' ',
-       6: ' ',
-       7: ' ',
-       8: ' '
-   }
-
-   firebase.database().ref(url)
-   .set(squares);
-
-    return dispatch => {
-        dispatch({
-            type: CHANGE_ALL_SQUARES,
-            payload: squares
-        })
+    let squares = {
+        Square_1: ' ',
+        Square_2: ' ',
+        Square_3: ' ',
+        Square_4: ' ',
+        Square_5: ' ',
+        Square_6: ' ',
+        Square_7: ' ',
+        Square_8: ' ',
+        Square_9: ' ',
+        player_1: player_1_id,
+        player_2: player_2_id
+    };
+    
+    if (match_id == '') {
+        newMatch_id = firebase.database().ref(`/matchs/`).push(squares).getKey();
+    } else {
+        firebase.database().ref(`/matchs/${match_id}`).set(squares);
+        newMatch_id = match_id;
     }
-};
+    
+    return dispatch => {
+        dispatch({ type: MATCH_START, payload: newMatch_id });
+    }
+}
+
+export const searchPlayer = () => {
+    return dispatch => {
+        //firebase.database().ref(url).child("player_2").equalTo('0')
+        firebase.database().ref(`/matchs/`).orderByChild("player_2").equalTo(0).limitToFirst(1)
+        .once("value", snapshot => {
+            dispatch({ type: REQUEST_NEW_MATCH, payload: snapshot});
+        }
+    )};
+}
 
 export const changeScoreBoard = (descricao) => {
     return dispatch => {
@@ -43,29 +55,28 @@ export const changeScoreBoard = (descricao) => {
     }
 };
 
-export const changeCurrentSquare = (squareNumber) => {
+export const changeCurrentSquare = (squareNumber, match_id, markedSimbol) => {
     
-   const url = `/matchs/${match_id}/${squareNumber}`;
+   const url = `/matchs/${match_id}/Square_${squareNumber}`;
 
    console.log('URL');
    console.log(url);
    console.log('URL');
 
    firebase.database().ref(url)
-   .set('X');
+   .set(markedSimbol);
     
     return dispatch => {
         dispatch({
-            type: CHANGE_SQUARE_NUMBER,
-            payload: squareNumber
+            type: '',
+            payload: ''
         })
     }
 };
 
-export const listenerCurrentSquaresStatus = () => {
-    
-    //const url = ;
-
+export const listenerCurrentSquaresStatus = (match_id) => {
+    console.log("MATCHHHHHH IDDDDDDDDDDDDDDD");
+    console.log(match_id);
    return dispatch => {
         firebase.database().ref(`/matchs/${match_id}/`)
         .on("value", snapshot => {
