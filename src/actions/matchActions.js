@@ -11,7 +11,7 @@ import {
 
 export const initMatch = (match_id, player_1_id, player_2_id) => {
     let newMatch_id = '';
-
+    let iMPlayer = 0;
 
     let squares = {
         Square_1: ' ',
@@ -23,19 +23,34 @@ export const initMatch = (match_id, player_1_id, player_2_id) => {
         Square_7: ' ',
         Square_8: ' ',
         Square_9: ' ',
+        next_player: 1,
         player_1: player_1_id,
         player_2: player_2_id
     };
     
     if (match_id == '') {
         newMatch_id = firebase.database().ref(`/matchs/`).push(squares).getKey();
+        iMPlayer = 1;
     } else {
         firebase.database().ref(`/matchs/${match_id}`).set(squares);
         newMatch_id = match_id;
+        iMPlayer = 2;
     }
     
+    console.log('Definindo iMPlayer.');
+    console.log(iMPlayer);
+    console.log('Definindo iMPlayer.');
+
     return dispatch => {
-        dispatch({ type: MATCH_START, payload: newMatch_id });
+        dispatch(
+            {
+                type: MATCH_START,
+                payload: {
+                    newMatch_id: newMatch_id,
+                    iMPlayer: iMPlayer
+                }
+            }
+        );
     }
 }
 
@@ -55,21 +70,45 @@ export const changeScoreBoard = (descricao) => {
     }
 };
 
-export const changeCurrentSquare = (squareNumber, match_id, markedSimbol) => {
+export const changeCurrentSquare = (squareNumber, match_id, markedSimbol, iMPlayer) => {
     
-   const url = `/matchs/${match_id}/Square_${squareNumber}`;
+    const urlSimbol = `/matchs/${match_id}/Square_${squareNumber}`;
+    let urlPlayer = '';
+
+    let nextPlayer = 1;
+
+    if(iMPlayer == 1) {
+        nextPlayer = 2;
+    }
+
+   urlPlayer = `/matchs/${match_id}/next_player`
 
    console.log('URL');
-   console.log(url);
+   console.log(urlSimbol);
    console.log('URL');
 
-   firebase.database().ref(url)
+   console.log('URL');
+   console.log(urlPlayer);
+   console.log('URL');
+
+   console.log('iMPlayer');
+   console.log(iMPlayer);
+   console.log('iMPlayer');
+
+   console.log('nextPlayer');
+   console.log(nextPlayer);
+   console.log('nextPlayer');
+
+   firebase.database().ref(urlSimbol)
    .set(markedSimbol);
     
+   firebase.database().ref(urlPlayer)
+   .set(nextPlayer);
+
     return dispatch => {
         dispatch({
-            type: '',
-            payload: ''
+            type: CHANGE_SQUARE_NUMBER,
+            payload: nextPlayer
         })
     }
 };

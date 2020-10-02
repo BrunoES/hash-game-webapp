@@ -12,15 +12,27 @@ class Square extends React.Component {
         }
     }
 
-    _changeCurrentSquare(squareNumber, match_id, markedSimbol) {
-        this.props.changeCurrentSquare(squareNumber, match_id, markedSimbol);
+    _changeCurrentSquare(squareNumber, match_id, markedSimbol, iMPlayer) {
+        this.props.changeCurrentSquare(squareNumber, match_id, markedSimbol, iMPlayer);
+    }
+
+    _getDisableButton(nextPlayer, iMPlayer) {
+        if(iMPlayer == 1 && nextPlayer == 0) {
+            return false;
+        } else {
+            if(nextPlayer == iMPlayer) {
+                return false;
+            }
+        }
+        return true;
     }
 
     render() {
         if(this.props.started != 'NAO') {
             return (
                 <button className="square"
-                    onClick={() => this._changeCurrentSquare(this.props.value, this.props.match_id, this.props.markedSimbol)}
+                    onClick={() => this._changeCurrentSquare(this.props.value, this.props.match_id, this.props.markedSimbol, this.props.iMPlayer)}
+                    disabled={this._getDisableButton(this.props.nextPlayer, this.props.iMPlayer)}
                 >
                     {this.props.squaresStatus[this.props.value - 1]}
                 </button>
@@ -39,7 +51,9 @@ const mapStateToProps = (state) => {
         squaresStatus: _.values(state.match.squaresStatus),
         match_id: state.match.match_id,
         started: state.match.started,
-        markedSimbol: state.match.markedSimbol
+        markedSimbol: state.match.markedSimbol,
+        nextPlayer: state.match.nextPlayer,
+        iMPlayer: state.match.iMPlayer
     }
 }
 

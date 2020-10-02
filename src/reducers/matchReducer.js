@@ -30,7 +30,10 @@ const INITIAL_STATE = {
     },
     markedSimbol: 'X',
     started: 'NAO',
-    player_1_id: ''
+    player_1_id: '',
+    iMPlayer: 0,
+    actualPlayer: 0,
+    nextPlayer: 0
 };
 
 let tmpSquaresStatus = INITIAL_STATE.squaresStatus;
@@ -38,7 +41,6 @@ let currentSquare = 0;
 let tmp_match_id= '';
 let tmp_player_1_id = '';
 let tmp_markedSimbol = '';
-let tmp_square_id = '';
 let retorno;
 
 const matchReducer = (state = INITIAL_STATE, action) => {
@@ -55,25 +57,16 @@ const matchReducer = (state = INITIAL_STATE, action) => {
                 tmp_player_1_id = _.values(action.payload.val())[0].player_1;
                 tmp_markedSimbol = 'O';
             }
-            console.log('=================');
-            console.log(tmp_match_id);
-            console.log(tmp_player_1_id);
-            console.log('=================');
-
             return { ...state, match_id: tmp_match_id, player_1_id: tmp_player_1_id, started: 'SIM', markedSimbol: tmp_markedSimbol, squaresStatus: INITIAL_STATE.squaresStatus };
         case MATCH_START:
-            return { ...state, score: INITIAL_STATE.score, squaresStatus: INITIAL_STATE.squaresStatus, match_id: action.payload, started: 'OK' };
+            return { ...state, score: INITIAL_STATE.score, squaresStatus: INITIAL_STATE.squaresStatus, match_id: action.payload.newMatch_id, iMPlayer: action.payload.iMPlayer, started: 'OK' };
         case CHANGE_SCOREBOARD:
             return { ...state, score: action.payload };
         case CHANGE_SQUARE_NUMBER:
-            /*tmpSquaresStatus = state.squaresStatus;
-            currentSquare = 'Square_'+action.payload;
-            tmpSquaresStatus[currentSquare] = state.markedSimbol;
-            return { ...state, squaresStatus: tmpSquaresStatus};*/
-        case CHANGE_ALL_SQUARES:
-            //tmpSquaresStatus = '';
-            console.log("STAUTSSSSSSSSSS");
             console.log(action.payload);
+            console.log(state.iMPlayer);
+            return { ...state, nextPlayer: action.payload };
+        case CHANGE_ALL_SQUARES:
             if(action.payload) {
                 retorno = action.payload;
                 tmpSquaresStatus.Square_1 = retorno.Square_1;
@@ -86,13 +79,7 @@ const matchReducer = (state = INITIAL_STATE, action) => {
                 tmpSquaresStatus.Square_8 = retorno.Square_8;
                 tmpSquaresStatus.Square_9 = retorno.Square_9;
             }
-            /*
-            console.log("ATUALIZADO:")
-            console.log(tmpSquaresStatus);
-            console.log("RETORNO:")
-            console.log(retorno);*/
-            
-            return { ...state };
+            return { ...state, nextPlayer: retorno.next_player };
 
         default:
             return state;
