@@ -5,7 +5,9 @@ import {
     MATCH_START,
     CHANGE_SCOREBOARD,
     CHANGE_SQUARE_NUMBER,
-    CHANGE_ALL_SQUARES
+    CHANGE_ALL_SQUARES,
+    SET_WINNER,
+    FLAG_WINNER
 
 } from '../actions/types';
 
@@ -24,6 +26,7 @@ export const initMatch = (match_id, player_1_id, player_2_id) => {
         Square_8: ' ',
         Square_9: ' ',
         next_player: 1,
+        winner: 0,
         player_1: player_1_id,
         player_2: player_2_id
     };
@@ -111,6 +114,46 @@ export const changeCurrentSquare = (squareNumber, match_id, markedSimbol, iMPlay
             payload: nextPlayer
         })
     }
+};
+
+export const flagWinner = (winner) => {
+    
+    return dispatch => {
+        dispatch({
+            type: FLAG_WINNER,
+            payload: winner
+        })
+    }
+
+};
+
+export const setWinner = (user_id, match_id, xOrO) => {
+    
+    const urlWinner = `/matchs/${match_id}/winner`;
+
+    console.log('user_id');
+    console.log(user_id);
+    console.log('user_id');
+
+    firebase.database().ref(urlWinner)
+    .set(xOrO)
+
+    return dispatch => {
+        dispatch({
+            type: SET_WINNER,
+            payload: user_id
+        })
+    }
+
+    /*
+    return dispatch => {
+        firebase.database().ref(urlWinner).set(user_id)
+        .on("value", snapshot => {
+            dispatch({ type: SET_WINNER, payload: snapshot.val() });
+        }
+    )};
+    */
+
 };
 
 export const listenerCurrentSquaresStatus = (match_id) => {

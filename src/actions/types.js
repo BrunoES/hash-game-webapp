@@ -4,3 +4,5 @@ export const CHANGE_ALL_SQUARES = 'modifica_todos_squares';
 
 export const MATCH_START = 'match_start';
 export const REQUEST_NEW_MATCH = 'uid_usuario_local';
+export const SET_WINNER = 'set_winner';
+export const FLAG_WINNER = 'flag_winner';

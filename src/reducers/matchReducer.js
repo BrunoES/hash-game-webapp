@@ -3,7 +3,9 @@ import {
     MATCH_START,
     CHANGE_SCOREBOARD,
     CHANGE_SQUARE_NUMBER,
-    CHANGE_ALL_SQUARES
+    CHANGE_ALL_SQUARES,
+    SET_WINNER,
+    FLAG_WINNER
 
 } from '../actions/types';
 
@@ -33,7 +35,9 @@ const INITIAL_STATE = {
     player_1_id: '',
     iMPlayer: 0,
     actualPlayer: 0,
-    nextPlayer: 0
+    nextPlayer: 0,
+    winner: '',
+    flagWin: false
 };
 
 let tmpSquaresStatus = INITIAL_STATE.squaresStatus;
@@ -79,8 +83,14 @@ const matchReducer = (state = INITIAL_STATE, action) => {
                 tmpSquaresStatus.Square_8 = retorno.Square_8;
                 tmpSquaresStatus.Square_9 = retorno.Square_9;
             }
-            return { ...state, nextPlayer: retorno.next_player };
-
+            return { ...state, nextPlayer: retorno.next_player, squaresStatus: tmpSquaresStatus };
+        case SET_WINNER:
+            if(action.payload) {
+                console.dir(action.payload)
+            }
+            return { ...state };
+        case FLAG_WINNER:
+            return { ...state, flagWin: action.payload };
         default:
             return state;
     }
